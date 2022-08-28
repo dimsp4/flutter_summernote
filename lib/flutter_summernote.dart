@@ -4,11 +4,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -133,7 +131,7 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
             visible: widget.showBottomToolbar,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Row(children: _generateBottomToolbar(context)),
+              child: _generateBottomToolbar(context),
             ),
           )
         ],
@@ -141,59 +139,13 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
     );
   }
 
-  List<Widget> _generateBottomToolbar(BuildContext context) {
-    var _toolbar = [
-      Expanded(
-        child: GestureDetector(
-          onTap: () async {
-            String data = await getText();
-            Clipboard.setData(new ClipboardData(text: data));
-          },
-          child: Row(
-              children: <Widget>[Icon(Icons.content_copy), Text("Copy")],
-              mainAxisAlignment: MainAxisAlignment.center),
-        ),
-      ),
-      Expanded(
-        child: GestureDetector(
-          onTap: () async {
-            ClipboardData data = await (Clipboard.getData(Clipboard.kTextPlain)
-                as FutureOr<ClipboardData>);
-
-            String txtIsi = data.text!
-                .replaceAll("'", '\\"')
-                .replaceAll('"', '\\"')
-                .replaceAll("[", "\\[")
-                .replaceAll("]", "\\]")
-                .replaceAll("\n", "<br/>")
-                .replaceAll("\n\n", "<br/>")
-                .replaceAll("\r", " ")
-                .replaceAll('\r\n', " ");
-            String txt = "\$('.note-editable').append( '" + txtIsi + "');";
-            _controller!.evaluateJavascript(txt);
-          },
-          child: Row(
-              children: <Widget>[Icon(Icons.content_paste), Text("Paste")],
-              mainAxisAlignment: MainAxisAlignment.center),
-        ),
-      )
-    ];
-
-    if (_hasAttachment) {
-      //add attachment widget
-      _toolbar.insert(
-          0,
-          Expanded(
-            child: GestureDetector(
-              onTap: () => _attach(context),
-              child: Row(
-                  children: <Widget>[Icon(Icons.attach_file), Text("Attach")],
-                  mainAxisAlignment: MainAxisAlignment.center),
-            ),
-          ));
-    }
-
-    return _toolbar;
+  Widget _generateBottomToolbar(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _attach(context),
+      child: Row(
+          children: <Widget>[Icon(Icons.attach_file), Text("Attach")],
+          mainAxisAlignment: MainAxisAlignment.center),
+    );
   }
 
   JavascriptChannel getTextJavascriptChannel(BuildContext context) {
@@ -367,22 +319,12 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         builder: (context) {
           return Column(children: <Widget>[
             ListTile(
-              leading: Icon(Icons.camera_alt),
-              title: Text("Camera"),
-              subtitle: Text("Attach image from camera"),
-              onTap: () async {
-                Navigator.pop(context);
-                final image = await _getImage(true);
-                if (image != null) _addImage(image);
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.photo),
               title: Text("Gallery"),
               subtitle: Text("Attach image from gallery"),
               onTap: () async {
                 Navigator.pop(context);
-                final image = await _getImage(false);
+                final image = await _getImage();
                 if (image != null) _addImage(image);
               },
             ),
@@ -390,9 +332,8 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         });
   }
 
-  Future<File?> _getImage(bool fromCamera) async {
-    final picked = await _imagePicker.getImage(
-        source: (fromCamera) ? ImageSource.camera : ImageSource.gallery);
+  Future<File?> _getImage() async {
+    final picked = await _imagePicker.getImage(source: ImageSource.gallery);
     if (picked != null) {
       return File(picked.path);
     } else {
