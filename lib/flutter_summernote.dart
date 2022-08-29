@@ -350,10 +350,6 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         "<img width=\"${widget.widthImage}\" src=\"data:image/png;base64, "
         "${base64Encode(imageBytes)}\" data-filename=\"$filename\">";
 
-    widget.fileSize = image.lengthSync() / 1000000;
-
-    print(widget.fileSize);
-
     String txt = "\$('.note-editable').append( '" + base64Image + "');";
     _controller!.evaluateJavascript(txt);
   }

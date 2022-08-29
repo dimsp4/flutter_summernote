@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FlutterSummernote(
         hint: "Your text here...",
         key: _keyEditor,
+        showBottomToolbar: true,
         hasAttachment: true,
         customToolbar: """
           [
