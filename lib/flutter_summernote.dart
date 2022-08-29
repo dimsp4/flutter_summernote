@@ -18,6 +18,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 * */
 
 //dimssssss
+//dimss
 
 class FlutterSummernote extends StatefulWidget {
   final String? value;
@@ -30,7 +31,7 @@ class FlutterSummernote extends StatefulWidget {
   final bool hasAttachment;
   final bool showBottomToolbar;
   final Function(String)? returnContent;
-  late final double fileSize;
+  double fileSize;
 
   FlutterSummernote({
     Key? key,
@@ -342,7 +343,9 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
       var file = File(picked.path);
       int sizeInBytes = file.lengthSync();
       double sizeInMb = sizeInBytes / 1000000;
+      
       widget.fileSize = sizeInMb;
+
       return file;
     } else {
       return null;
