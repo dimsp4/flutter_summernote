@@ -28,20 +28,22 @@ class FlutterSummernote extends StatefulWidget {
   final bool hasAttachment;
   final bool showBottomToolbar;
   final Function(String)? returnContent;
+  late final double fileSize;
 
-  FlutterSummernote(
-      {Key? key,
-      this.value,
-      this.height,
-      this.decoration,
-      this.widthImage: "100%",
-      this.hint,
-      this.customToolbar,
-      this.customPopover,
-      this.hasAttachment: false,
-      this.showBottomToolbar: true,
-      this.returnContent})
-      : super(key: key);
+  FlutterSummernote({
+    Key? key,
+    this.value,
+    this.height,
+    this.decoration,
+    this.widthImage: "100%",
+    this.hint,
+    this.customToolbar,
+    this.customPopover,
+    this.hasAttachment: false,
+    this.showBottomToolbar: true,
+    this.returnContent,
+    this.fileSize: 0,
+  }) : super(key: key);
 
   @override
   FlutterSummernoteState createState() => FlutterSummernoteState();
@@ -347,6 +349,10 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
     String base64Image =
         "<img width=\"${widget.widthImage}\" src=\"data:image/png;base64, "
         "${base64Encode(imageBytes)}\" data-filename=\"$filename\">";
+
+    widget.fileSize = image.lengthSync() / 1000000;
+
+    print(widget.fileSize);
 
     String txt = "\$('.note-editable').append( '" + base64Image + "');";
     _controller!.evaluateJavascript(txt);
