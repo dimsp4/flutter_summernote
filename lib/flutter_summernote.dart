@@ -31,7 +31,6 @@ class FlutterSummernote extends StatefulWidget {
   final bool hasAttachment;
   final bool showBottomToolbar;
   final Function(String)? returnContent;
-  List<double>? fileSize;
 
   FlutterSummernote({
     Key? key,
@@ -45,7 +44,6 @@ class FlutterSummernote extends StatefulWidget {
     this.hasAttachment: false,
     this.showBottomToolbar: true,
     this.returnContent,
-    this.fileSize,
   }) : super(key: key);
 
   @override
@@ -58,6 +56,7 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
   late String _page;
   final Key _mapKey = UniqueKey();
   final _imagePicker = ImagePicker();
+  double fileSize = 0;
   late bool _hasAttachment;
 
   void handleRequest(HttpRequest request) {
@@ -138,7 +137,29 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
               padding: const EdgeInsets.all(16.0),
               child: _generateBottomToolbar(context),
             ),
-          )
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          if (fileSize == 0) ...[
+            SizedBox.shrink()
+          ] else if (fileSize <= 2) ...[
+            Text(
+              "Ukuran: $fileSize.toStringAsFixed(1)} Mb (Berhasil)",
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 11,
+              ),
+            )
+          ] else ...[
+            Text(
+              "Ukuran: $fileSize.toStringAsFixed(1)} Mb (File terlalu besar)",
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 11,
+              ),
+            )
+          ]
         ],
       ),
     );
@@ -341,11 +362,10 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
     final picked = await _imagePicker.getImage(source: ImageSource.gallery);
     if (picked != null) {
       var file = File(picked.path);
+
       int sizeInBytes = file.lengthSync();
       double sizeInMb = sizeInBytes / 1000000;
-
-      widget.fileSize!.add(sizeInMb);
-
+      fileSize = sizeInMb;
 
       return file;
     } else {
