@@ -31,7 +31,7 @@ class FlutterSummernote extends StatefulWidget {
   final bool hasAttachment;
   final bool showBottomToolbar;
   final Function(String)? returnContent;
-  double fileSize;
+  List<double>? fileSize;
 
   FlutterSummernote({
     Key? key,
@@ -45,7 +45,7 @@ class FlutterSummernote extends StatefulWidget {
     this.hasAttachment: false,
     this.showBottomToolbar: true,
     this.returnContent,
-    this.fileSize: 0,
+    this.fileSize,
   }) : super(key: key);
 
   @override
@@ -343,8 +343,9 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
       var file = File(picked.path);
       int sizeInBytes = file.lengthSync();
       double sizeInMb = sizeInBytes / 1000000;
-      
-      widget.fileSize = sizeInMb;
+
+      widget.fileSize!.add(sizeInMb);
+
 
       return file;
     } else {
