@@ -140,28 +140,6 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
               child: _generateBottomToolbar(context),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          if (fileSize == 0) ...[
-            SizedBox.shrink()
-          ] else if (fileSize <= 2) ...[
-            Text(
-              "Ukuran: $fileSize.toStringAsFixed(1)} Mb (Berhasil)",
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 11,
-              ),
-            )
-          ] else ...[
-            Text(
-              "Ukuran: $fileSize.toStringAsFixed(1)} Mb (File terlalu besar)",
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 11,
-              ),
-            )
-          ]
         ],
       ),
     );
